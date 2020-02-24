@@ -250,3 +250,79 @@ echo "Bravo vous avez trouvé le bon nombre"
 
 ### Exercice 7 - Statistiques
 
+1. Écrivez un script qui prend en paramètres trois entiers (entre -100 et +100) et affiche le min, le max
+et la moyenne. Vous pouvez réutiliser la fonction de l’exercice 3 pour vous assurer que les paramètres
+sont bien des entiers.
+2. Généralisez le programme à un nombre quelconque de paramètres (pensez à SHIFT)
+
+    ```sh
+    #!/bin/bash
+    # factorielle.sh
+    # version 1.0
+    # date 19/02/2020
+    # state OK
+
+    function usage() {
+        echo "Usage: $0 [ARG]"
+        echo "[ARG] : Many integer parameters between -100 and 100"
+        exit 1
+    }
+
+    function is_number()
+    {
+        re='^[+-]?[0-9]+([.][0-9]+)?$'
+        if ! [[ $1 =~ $re ]]
+        then
+            return 1
+        else
+            return 0
+        fi
+    }
+
+    function statistique() {
+        min=$1
+        max=$1
+        total=0
+        for int in $*
+        do
+            if (( $min > $int ))
+            then
+                min=$int
+            elif (( $max < $int ))
+            then
+                max=$int
+            fi
+
+            total=$(( $total + $int ))
+
+            (( i++ ))
+        done
+
+        moy=$(( $total / $i ))
+        echo -e "min : $min\nmoy : $moy\nmax : $max"
+    }
+
+    function test_params() {
+
+        for param in $*
+        do
+            is_number $param
+            if [[ $? == 0 ]]
+            then
+                if [ $param -lt -100 ] || [ $param -gt 100 ]
+                then
+                    usage
+                fi
+            else
+                usage
+            fi
+        done
+
+        statistique $*
+    }
+
+    test_params $*
+    ```
+
+3. Modifiez votre programme pour que les notes ne soient plus données en paramètres, mais saisies et
+stockées au fur et à mesure dans un tableau.
